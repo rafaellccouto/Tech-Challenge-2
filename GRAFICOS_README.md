@@ -3,7 +3,7 @@
 ## ✅ O que foi adicionado
 
 ### 1. Script Principal: `visualizacoes.py`
-Script Python que gera automaticamente 8 gráficos profissionais em alta resolução (300 DPI):
+Script Python que gera automaticamente 8 gráficos em (300 DPI):
 
 ```bash
 .\venv\Scripts\python.exe visualizacoes.py
