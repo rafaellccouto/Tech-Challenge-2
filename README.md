@@ -252,12 +252,5 @@ head -5 resultados_final.csv
 
 ---
 
-## 📞 Contato
-
-Tech Challenge 2 - Postech MBA IA  
-Dezembro 2025
-
----
-
 **Para análise técnica detalhada, veja [README_DETALHADO.md](README_DETALHADO.md)**
 
