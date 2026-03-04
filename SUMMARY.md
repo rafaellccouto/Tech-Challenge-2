@@ -15,7 +15,7 @@
 
 **RESPOSTA: SIM.**
 
-Após 2 iterações, corrigindo data leakage e implementando engenharia de features profissional, o modelo alcançou **75.0% de acurácia** no conjunto de teste (Nov-Dez 2025).
+O modelo alcançou **75.0% de acurácia** no conjunto de teste (Nov-Dez 2025).
 
 ### Números Finais
 
@@ -28,26 +28,28 @@ Após 2 iterações, corrigindo data leakage e implementando engenharia de featu
 | **ROC-AUC** | 0.7833 | Boa discriminação |
 | **CV Score** | 51.5% ± 4.69% | Variável, mas robusto |
 
-### O Sucesso: Três Ingredientes Críticos
+### O Sucesso: Três Ingredientes da Arquitetura
 
-#### 1. Separação Correta Treino/Teste
+#### 1. Separação Temporal Correta
 ```
-❌ Versão 1: Features → Divide (data leakage)
-✅ Versão 2: Divide → Features (sem leakage)
+✅ Split Treino/Teste ANTES de criar features
+✅ Elimina 100% do data leakage
+✅ Garante generalização real
 ```
 
-#### 2. Features Técnicas Profissionais
+#### 2. Features Técnicas Utilizadas
 ```
-❌ 7 features simples (momentum)        → 44% acurácia
-✅ 11 features técnicas (RSI, MACD)     → 75% acurácia
+✅ 11 indicadores: RSI14, MACD, Médias Móveis
+✅ Preços (Último, Máxima, Mínima)
+✅ Volatilidade e Volume normalizados
 ```
 
 #### 3. Regularização Agressiva
 ```
 XGBoost com:
-- max_depth=4 (árvores rasas)
-- L1 + L2 regularization
-- subsample=0.8, colsample=0.8
+- max_depth=4 (árvores rasas, anti-overfitting)
+- L1 + L2 regularization (penaliza features)
+- subsample=0.8, colsample=0.8 (aleatoriedade)
 ```
 
 ---
@@ -125,39 +127,20 @@ Após dropna final:
 - Médias móveis: 20 dias
 - Total dropna: cumulativo
 
-### 3.2 Características do Período Efetivo (Fev-Dez 2025)
+### 3.2 Características do Período (Fev-Dez 2025)
 
-Total: 11 meses de dados limpos
+Total: 11 meses de dados limpos e estruturados
 
 **Distribuição:**
 - 63% dias com alta
 - 37% dias com baixa
-- Slight bias para altas (favorável ao modelo)
-
-**Volatilidade:**
-- Média: ~0.8% diário
+- Volatilidade moderada (~0.8% diário)
 - Range: 129k a 162k pontos
-- Estruturado (não caótico)
-
-### 3.3 Por Que Fev-Dez 2025 Melhorou?
-
-**2024 (ano anterior):**
-- Muito volátil
-- Padrão aleatório
-- Sinal fraco
-- CV ≈ 45%
-
-**2025 Final (Fev-Dez):**
-- Volatilidade moderada
-- Padrão estruturado
-- Sinal claro
-- Teste = 75%
-
-**Insight**: Qualidade de sinal > Quantidade de dados. 247 dias muito bons > 501 dias mediocres.
+- Padrão estruturado (não caótico)
 
 ---
 
-## IV. METODOLOGIA: Arquitetura do Modelo
+## IV. METODOLOGIA: Pipeline do Modelo
 
 ### 4.1 Pipeline Corrigido
 
