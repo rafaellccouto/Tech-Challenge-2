@@ -19,7 +19,7 @@ cat resultados_final.csv
 
 ## 📊 Gráficos para Apresentação
 
-✨ **8 gráficos profissionais** em alta resolução (300 DPI) incluindo:
+✨ **8 gráficos** em (300 DPI) incluindo:
 - 📈 Série histórica do Ibovespa
 - 🎯 Previsões vs valores reais  
 - 📉 Matriz de confusão
