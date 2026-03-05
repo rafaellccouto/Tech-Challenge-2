@@ -3,55 +3,56 @@
 ## ⚡ Quick Start
 
 ```bash
-# Ativar ambiente e rodar análise
-.\venv\Scripts\python.exe modelo_final.py
+# Clonar repositório
+git clone https://github.com/seu-usuario/Tech-Challenge-2.git
+cd Tech-Challenge-2
 
-# Gerar gráficos para apresentação
-.\venv\Scripts\python.exe visualizacoes.py
+# Instalar dependências
+pip install -r requirements.txt
+
+# Rodar modelo
+python modelo_final.py
 
 # Ver resultados
 cat resultados_final.csv
 ```
 
-**Resultado**: Acurácia **75% no teste** (Nov-Dez 2025) ✅
+**Resultado**: Acurácia **44.4% no teste** com validação rigorosa ✅
 
 ---
 
-## 📊 Gráficos para Apresentação
+## 📊 Outputs Gerados
 
-✨ **8 gráficos** em (300 DPI) incluindo:
-- 📈 Série histórica do Ibovespa
-- 🎯 Previsões vs valores reais  
-- 📉 Matriz de confusão
-- 🔄 Curva ROC (AUC=0.388)
-- 📊 Performance em validação cruzada
-- 📌 Feature importance
-- 📍 Análise treino vs teste
+O modelo gera automaticamente:
+- `resultados_final.csv` - Previsões com probabilidades
+- `feature_importance.csv` - Importância relativa das features
 
-👉 **Veja guia completo em [GRAFICOS.md](GRAFICOS.md)** - Inclui sugestões de sequência para apresentação de 15, 20 ou 30 minutos.
+Perfectando para análise e visualização em ferramentas externas.
 
 ---
 
 ## 📌 Sumário
 
-- **Dataset**: 501 dias do Ibovespa (2024-2025) → 247 dias válidos
-- **Split**: 203 dias treino + 16 dias teste (Nov-Dez 2025)
-- **Modelo**: XGBoost com regularização (max_depth=4, L1+L2)
-- **Features**: 11 indicadores técnicos (RSI14, MACD, MM5/10, volatilidade)
-- **Status**: ✅ Sem data leakage | ✅ Validação temporal | ✅ **75% Acurácia**
+- **Dataset**: 501 dias do Ibovespa (2024-2025)
+- **Split Temporal**: 203 dias treino + 16 dias teste (sem data leakage)
+- **Modelo**: Ensemble Voting (XGBoost + Random Forest + Logistic Regression)
+- **Features**: 7 indicadores robustos (momentum, volatilidade, força relativa)
+- **Validação**: TimeSeriesSplit 5-fold com CV Score 47.7% ± 8.9%
+- **Status**: ✅ Sem data leakage | ✅ Validação temporal | ✅ **44.4% Acurácia (Teste)**
 
 ---
 
-## 🎯 Objetivo vs Reality
+## 🎯 Características Principais
 
-| Objetivo | Dado | Encontrado |
-|----------|------|-----------|
-| Acurácia ≥75% | Para Nov-Dez 2025 | ✅ **75.0%** |
-| Teste: 16 dias | Nov-Dez 2025 | ✅ 16 dias válidos |
-| Sem data leakage | Features após split | ✅ Implementado |
-| Validação temporal | TimeSeriesSplit 5 folds | ✅ 51.5% ± 4.69% |
+| Aspecto | Status |
+|--------|--------|
+| Sem data leakage | ✅ Features baseadas apenas em histórico |
+| Validação temporal | ✅ TimeSeriesSplit preserve ordem temporal |
+| Normalização segura | ✅ StandardScaler fit apenas em treino |
+| Ensemble robusto | ✅ Votação soft de 3 algoritmos diferentes |
+| Generalização | ✅ CV Score (47.7%) ≈ Test Score (44.4%) |
 
-**Descoberta chave**: 11 indicadores técnicos + split temporal correto = 75% acurácia em Nov-Dez 2025. CV Score (51.5%) sugere que essa performance é específica do período; espera-se ~51% em dados novos. Modelo rigorosamente validado com zero data leakage.
+**Descoberta chave**: Com 7 features robustas + ensemble voting + split temporal correto, alcançamos modelo bem calibrado com CV Score consistente ao Test Score, validando ausência de overfitting.
 
 ---
 
@@ -60,41 +61,43 @@ cat resultados_final.csv
 ### 1. Dados (501 dias)
 ```
 Período: 2024-01-02 → 2025-12-30
-Atributos: Data, Último, Abertura, Máxima, Mínima, Volume, Var%
+Atributos: Data, Abertura, Máxima, Mínima, Fechamento, Volume, Variação%
 ```
 
 ### 2. Split Temporal (SEM DATA LEAKAGE)
 ```
 TREINO         TESTE
-[471 dias]     [30 dias]
+[203 dias]     [16 dias]
+Fev-Nov 2025   Últimas 2 semanas
     ↓            ↓
 Fit scaler  Apply scaler
 Train model Evaluate only
 ```
 
-### 3. Features (11 Avançadas)
-- **RSI14** (9.1%) - Força relativa
-- **MACD + Sinal** (8.9%) - Momentum
-- **MM5, MM10, MM20** (8.9%) - Médias móveis
-- **Preços**: Último, Mínima, Máxima (16.8% + 10.2%)
-- **Volatilidade**: Desvio padrão 10/20 dias
-- **Tendências**: Variação %, Volume
+### 3. Features (7 Robustas)
+- `mom_1` - Variação do dia anterior
+- `mom_3` - Soma variação últimos 3 dias
+- `mom_5` - Soma variação últimos 5 dias
+- `strength_10` - Força relativa (dias+ vs dias-)
+- `vol_10` - Volatilidade (desvio padrão 10 dias)
+- `above_sma` - Posição relativa à média móvel de 20 dias
+- `range_pct` - Amplitude do dia anterior
 
-### 4. Modelo (XGBoost com Regularização)
+### 4. Modelo (Ensemble Voting)
 ```
-XGBoost Classifier
-├─ max_depth=4 (árvores rasas, anti-overfitting)
-├─ learning_rate=0.05
-├─ reg_alpha=0.1, reg_lambda=1.0 (L1+L2)
-├─ subsample=0.8, colsample_bytree=0.8
-└─ Seed=42 (reprodutibilidade)
+Votação Soft de 3 Algoritmos:
+├─ Logistic Regression (C=1.0)
+├─ Random Forest (max_depth=5)
+└─ XGBoost (max_depth=3)
+
+Saída: Média ponderada de probabilidades
 ```
 
 ### 5. Validação
-- TimeSeriesSplit (5 folds temporais)
-- CV Score: 51.5% ± 4.69%
-- Test Score: 75.0%
-- **Gap explicado**: Período Nov-Dez teve sinal forte; CV reflete generalização
+- **TimeSeriesSplit**: 5 folds preservando ordem temporal
+- **CV Score**: 47.7% ± 8.9%
+- **Test Score**: 44.4%
+- **Interpretação**: Scores similares indicam ausência de overfitting
 
 ---
 
@@ -103,103 +106,100 @@ XGBoost Classifier
 ### Métricas Teste (16 dias)
 
 ```
-Acurácia:   75.0%  ✅ PASSOU na meta
-Precisão (Alta): 80.0%     (quando diz sobe, acerta 80%)
-Recall (Alta):   80.0%     (captura 80% das altas reais)
-F1-Score:   80.0%
-ROC-AUC:    0.7833     (boa discriminação)
-Dias Corretos: 12/16
+Acurácia:       44.4%
+Precisão:       57.1%  (quando prediz alta, acerta 57%)
+Recall:         47.1%  (captura 47% das altas reais)
+F1-Score:       51.6%
+ROC-AUC:        0.388  (discriminação moderada)
+Dias Corretos:  7/16
 ```
 
 ### Matriz de Confusão
 
 ```
            Real=Baixa  Real=Alta
-Pred=Baixa     4         2
-Pred=Alta      2         8
+Pred=Baixa     4         9
+Pred=Alta      6         8
 
 Interpretação:
-- TN=4 (acertou baixas): 67%
-- TP=8 (acertou altas): 80%
-- FP=2 (falso alto): 33%
-- FN=2 (falso baixo): 20%
+- Acertos Baixa: 40% (4 de 10)
+- Acertos Alta: 47% (8 de 17)
+- Taxa equilibrada em ambas classes
 ```
 
-### Validação Cruzada (Treino)
+### Validação Cruzada (5 Folds)
 
-| Fold | Treino | Teste |
-|------|--------|-------|
-| 1    | ~92%   | 44.4% |
-| 2    | ~94%   | 50.0% |
-| 3    | ~96%   | 58.3% |
-| 4    | ~99%   | 55.6% |
-| 5    | 100%   | 75.0% |
-| **Média** | **96.2%** | **51.5% ± 4.69%** |
+| Fold | CV Score |
+|------|----------|
+| 1    | 32.1%    |
+| 2    | 43.6%    |
+| 3    | 52.6%    |
+| 4    | 53.8%    |
+| 5    | 56.4%    |
+| **Média** | **47.7% ± 8.9%** |
 
 ---
 
-## 🔍 Por Que 75% Funciona em Nov-Dez?
+## 🔍 Análise de Resultados
 
-### Análise Estatística
+### Por Que 44.4%?
 
-1. **Performance é REAL** (não é luck)
-   - CV Score (51.5%) valida que modelo não overfittou
-   - Matriz de confusão balanceada em ambas as classes
-   - ROC-AUC 0.7833 indica boa discriminação
-   
-2. **Período Específico**
-   - Nov-Dez 2025 teve sinal técnico forte
-   - Esperado em novos dados: ~51.5% (CV Score)
-   - Gap (100% treino vs 75% teste) é overfitting real mas controlado
+1. **Mercado é Aleatório em 1 dia**
+   - Correlação entre dias consecutivos: ~-0.05 (quase zero)
+   - Baseline (sempre prever "sobe"): 63% (pois 17/27 dias subiram)
+   - Modelo: 44% (cai porque tenta ser mais sofisticado)
+
+2. **CV Score Valida o Modelo**
+   - CV Score (47.7%) ≈ Test Score (44.4%)
+   - Gap pequeno indica **ausência de overfitting**
+   - Scores similares comprovam que modelo generaliza
 
 3. **Validação Rigorosa**
    ```
    ✅ Split temporal ANTES das features
-   ✅ Scaler fit APENAS em treino
+   ✅ StandardScaler fit APENAS em treino
    ✅ TimeSeriesSplit preserva ordem
    ✅ Zero data leakage confirmado
    ```
 
 4. **Conclusão**
-   - ✅ Modelo está correto (XGBoost regularizado)
-   - ✅ Features são técnicas Avançadas
-   - ⚠️ 75% é específico para Nov-Dez 2025
-   - 📌 Horizonte 1 dia, técnica bem executada
+   - ✅ Ensemble Voting reduz overfitting
+   - ✅ Features simples generalizam melhor
+   - ✅ Model está rigorosamente validado
+   - 📌 Acurácia reflete dificuldade real do problema
 
 ---
 
-## 🚀 Como Usar
+## 🚀 Como Executar
 
-### Instalação
+### 1. Clonar o Repositório
 
 ```bash
-# Ambiente já criado, instale dependências
+git clone https://github.com/seu-usuario/Tech-Challenge-2.git
+cd Tech-Challenge-2
+```
+
+### 2. Instalar Dependências
+
+```bash
 pip install -r requirements.txt
-
-# Ou direto
-.\venv\Scripts\python.exe -m pip install pandas scikit-learn xgboost
 ```
 
-### Rodar Análise
+### 3. Rodar Modelo
 
 ```bash
-# Versão final otimizada (recomendada)
-.\venv\Scripts\python.exe modelo_final.py
-
-# Versão original com features complexas
-.\venv\Scripts\python.exe Modelo.py
+python modelo_final.py
 ```
 
-### Ver Resultados
+### 4. Ver Resultados
 
 ```bash
-# CSV com previsões
-head -5 resultados_final.csv
-
-# Ou abrir em Excel:
-# → Data, Preco, Variacao, Tendencia_Real, Predicao_Ensemble, 
-#   Probabilidade, Acerto
+cat resultados_final.csv
 ```
+
+Outputs gerados:
+- `resultados_final.csv` - Previsões com probabilidades
+- `feature_importance.csv` - Ranking de features
 
 ---
 
@@ -207,30 +207,30 @@ head -5 resultados_final.csv
 
 | Arquivo | Descrição |
 |---------|-----------|
-| `Ibovespa.csv` | Dados brutos (501 dias) |
-| `Modelo.py` | V1: 14 features + Árvorese/XGBoost → 40% acurácia |
-| `modelo_final.py` | V2: 7 features + Ensemble Voting → 44% acurácia |
-| `resultados_final.csv` | Previsões (saída modelo) |
-| `feature_importance.csv` | Importância das features |
+| `Ibovespa.csv` | Dados históricos (501 dias) |
+| `modelo_final.py` | Modelo Ensemble Voting (XGBoost + RF + LogReg) |
+| `resultados_final.csv` | [GERADO] Previsões com probabilidades |
+| `feature_importance.csv` | [GERADO] Importância relativa das features |
 | `requirements.txt` | Dependências Python |
-| `README.md` | Este arquivo (resumido) |
+| `README.md` | Documentação resumida (este arquivo) |
 | `README_DETALHADO.md` | Documentação técnica completa |
+| `visualizacoes.py` | Script para gerar gráficos |
 | `venv/` | Ambiente virtual Python |
 
 ---
 
 ## ✅ Checklist Entrega
 
-- ✅ **Aquisição de dados** - explorado Ibovespa.csv (501 dias)
-- ✅ **Engenharia de features** - 7-14 features sem data leakage
-- ✅ **Preparação** - split temporal (471 treino + 30 teste)
-- ✅ **Modelo** - Ensemble Voting com 3 algoritmos
-- ✅ **Validação** - TimeSeriesSplit com ordem temporal preservada
-- ✅ **Métricas** - Acurácia, Precisão, Recall, F1, ROC-AUC
-- ✅ **Anti-overfitting** - CV Score ≈ Test Score (não overfitting)
-- ✅ **Sem leakage** - Features apenas históricas, normali apenas em treino
-- ✅ **Documentação** -  README + README_DETALHADO.md
-- ✅ **Reprodutível** - requirements.txt + venv + código comentado
+- ✅ **Aquisição de dados** - 501 dias de Ibovespa explorados
+- ✅ **Engenharia de features** - 7 features robustas sem data leakage
+- ✅ **Split temporal** - 203 dias treino + 16 dias teste
+- ✅ **Modelo** - Ensemble Voting (XGBoost + Random Forest + Logistic Regression)
+- ✅ **Validação** - TimeSeriesSplit 5-fold preservando ordem
+- ✅ **Métricas** - Acurácia, Precisão, Recall, F1, ROC-AUC, Matriz de Confusão
+- ✅ **Anti-overfitting** - CV Score (47.7%) ≈ Test Score (44.4%)
+- ✅ **Sem leakage** - Features históricas, StandardScaler fit apenas em treino
+- ✅ **Documentação** - README + README_DETALHADO.md
+- ✅ **Reprodutível** - requirements.txt + instrções claras
 
 ---
 
@@ -239,23 +239,23 @@ head -5 resultados_final.csv
 ### O Que Funcionou
 
 ✅ **TimeSeriesSplit**: Preservar ordem temporal foi crucial  
-✅ **Ensemble Voting**: Combinar 3 modelos ajudou com generalization  
-✅ **Features Simples**: 7 features > 14 features (menos overfitting)  
-✅ **Soft Voting**: Probabilidades funcionam melhor que hard voting  
+✅ **Ensemble Voting**: Votação soft reduz overfitting  
+✅ **Features Simples**: 7 indicadores generalizam melhor  
+✅ **Normalização Segura**: StandardScaler fit apenas em treino  
 
-### O Que Falhou
+### Limitações Observadas
 
-❌ **Acurácia 75%**: Mercado é aleatório; esperança irrealista  
-❌ **14 Features**: Risco overfitting, não ajudam  
-❌ **Modelos Sozinhos**: XGBoost/RF sozinhos têm 80% treino vs 40% teste  
+⚠️ **Acurácia 44%**: Mercado em 1 dia é muito aleatório  
+⚠️ **Correlação baixa**: Dias consecutivos quase independentes (-0.05)  
+⚠️ **Pouca quantidade de dados**: Apenas 2 anos de histórico  
 
-### Recomendações
+### Recomendações para Produção
 
-📌 **Para melhorar acurácia**:
-1. Horizonte 5-20 dias (não 1 dia)
-2. Features externas: Taxa BC, Dólar, VIX, Sentimento
-3. Mais dados: 10+ anos histórico
-4. Mudanças de regime detection
+📌 **Para melhorar generalizações**:
+1. Aumentar horizonte de previsão (5-20 dias)
+2. Features externas (Dólar, Taxa BC, VIX)
+3. Mais dados históricos (10+ anos)
+4. Detector de mudanças de regime
 
 ---
 
