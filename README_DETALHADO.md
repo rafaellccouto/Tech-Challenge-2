@@ -278,44 +278,91 @@ Talvez melhorasse se tivéssemos:
 
 ## 🚀 Como Executar
 
-### 1. Preparação do Ambiente
+### 1. Clonar o Repositório
 
 ```bash
-# Navegue ao diretório
-cd "c:\Users\Rafael\Desktop\Rafael\Postech\Fase 2\Tech-Challenge-2"
-
-# Ative venv (se PowerShell blocar, use Command Prompt)
-venv\Scripts\activate
-
-# Ou execute Python do venv diretamente
-.\venv\Scripts\python.exe
+git clone https://github.com/seu-usuario/Tech-Challenge-2.git
+cd Tech-Challenge-2
 ```
 
-### 2. Instalar Dependências
+### 2. Criar Ambiente Virtual (Recomendado)
+
+**Windows (PowerShell/CMD):**
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+**macOS/Linux (Bash):**
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+### 3. Instalar Dependências
 
 ```bash
 pip install -r requirements.txt
-#  pandas numpy scikit-learn xgboost matplotlib seaborn
 ```
 
-### 3. Executar Análise
+Isso instalará:
+- pandas
+- numpy
+- scikit-learn
+- xgboost
+- matplotlib
+- seaborn
 
+### 4. Executar o Modelo
+
+**Versão Completa** (14 features + XGBoost/Random Forest):
 ```bash
-# Versão completa original (14 features complexas)
 python Modelo.py
+```
 
-# Versão Final (7 features simples, ensemble voting)
+**Versão Final Otimizada** (7 features + Ensemble Voting - Recomendado):
+```bash
 python modelo_final.py
 ```
 
-### 4. Visualizar Resultados
+### 5. Visualizar Resultados
+
+Os modelos geram automaticamente:
+
+- **`resultados_final.csv`** - Previsões com probabilidades e acertos
+- **`feature_importance.csv`** - Importância relativa das features
+
+Abra em seu editor de texto, terminal ou Excel:
 
 ```bash
-# Arquivo CSV com previsões
-head -10 resultados_final.csv
+# Visualizar no terminal
+type resultados_final.csv
 
-# Ou abrir em Excel:
-# resultado_final.csv
+# Ou com head/tail
+head -10 resultados_final.csv
+tail -5 resultados_final.csv
+```
+
+### 📋 Requisitos Mínimos
+
+- **Python**: 3.8+
+- **Espaço em disco**: ~500MB (incluindo dependências)
+- **Tempo de execução**: 30-60 segundos por modelo
+
+### 🛠️ Troubleshooting
+
+**Erro: "python: command not found"**
+- Verifique se Python está instalado: `python --version`
+- Windows: Use `py` ou o caminho completo para o executável
+
+**Erro: "No module named 'pandas'"**
+- Confirme que o venv está ativado
+- Reinstale dependências: `pip install -r requirements.txt --force-reinstall`
+
+**Erro: Permission denied no venv/Scripts/activate** (Windows PowerShell)
+- Use Command Prompt em vez de PowerShell, ou execute:
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 ---
