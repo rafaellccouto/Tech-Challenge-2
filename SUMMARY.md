@@ -314,28 +314,6 @@ Média:  51.5% ± 4.69%
 | KNN Otimizado | - | - | **K=10** | ✅ **NOVO** |
 | Reprodutível | requirements.txt | ✅ | ✅ | ✅ COMPLETO |
 
-### Recomendações para Produção (Atualizado)
-
-**Status Atual:**
-- ✅ **Deploy imediato possível**: Ensemble K=10 com 81.25% accuracy
-- ✅ **Código production-ready**: modelo_final.py v2.1 testado
-- ✅ **Documentação completa**: 2,000+ linhas técnicas
-
-**Próximas Melhorias (Prioridade):**
-1. Feature selection (remover colinearidade em KNN)
-2. Otimizar pesos do ensemble (grid search pesos)
-3. Validação em dados 2026 (fora-da-amostra)
-4. Retraining mensal automático
-5. Adicionar features externas (dólar, taxa juros, VIX)
-
-**Limitações Atuais:**
-- CV Score (51.5%) < Teste (81.25%) → Série temporal fraca intrínsecamente
-- Dataset pequeno (203 treino) → limite de capacidade
-- Período Nov-Dez 2025 pode não ser representativo
-
-**Recomendação Final:**
-✅ **MODELO PRONTO PARA PRODUÇÃO** - Versão 2.1 com ensemble K=10
-
 ---
 
 ## VIII. Arquivos Gerados

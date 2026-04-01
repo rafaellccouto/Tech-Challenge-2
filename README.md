@@ -263,24 +263,6 @@ Outputs gerados:
 ⚠️ **44 amostras de teste**: Nov-Dez 2025 apenas; validação 2026 imprescindível  
 ⚠️ **K=10 otimizado para Nov-Dez**: Pode degenerar em 2026 com regime diferente  
 
-### Recomendações para Produção (v2.1)
-
-📌 **IMEDIATO (Bloqueador)**:
-1. ✅ **Validar em 2026** - Testar K=10 ensemble em Jan-Fev 2026 real data (success: ≥75%)
-
-📌 **Curto Prazo (1-2 semanas)**:
-2. Otimizar pesos [w_lr, w_rf, w_xgb, w_knn] via grid search
-3. Feature selection - Top 5-7 features para reduzir curse of dimensionality
-
-📌 **Médio Prazo (2-4 semanas)**:
-4. Adicionar features exógenas (Dólar, Selic, VIX) para melhorar CV ~50% → 55%
-5. Estender horizonte (5-day, 20-day vs 1-day) para menos ruído
-
-📌 **Monitoramento Contínuo**:
-6. Retraining mensal com novos dados
-7. Drift detection para mudanças de regime
-8. A/B test contra baseline (buy-and-hold)
-
 ---
 
 ## 📚 Referências
