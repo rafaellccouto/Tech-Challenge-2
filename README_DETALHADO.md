@@ -518,26 +518,6 @@ Tech-Challenge-2/
 3. **Modelos Sozinhos**: Nenhum algoritmo individual supera ensemble (max 69% vs 81%)
 4. **Gap grande (v2.0)**: 31.25% gap com K=5 (K=10 reduziu para 18.75%)
 
-### Recomendações Para Produção (v2.1)
-
-**Imediato (Bloqueador)**:
-1. ✅ **VALIDAÇÃO 2026**: Testar K=10 ensemble em Jan-Fev 2026 real data
-   - Success criteria: ≥75% acurácia
-   - Decision: Deploy sim/não baseado em resultado
-
-**Curto Prazo (1-2 semanas)**:
-2. **Otimizar Pesos**: Grid search [w_lr, w_rf, w_xgb, w_knn] para possível +1-2%
-3. **Feature Selection**: Top 5-7 features via importância → melhora KNN (curse of dimensionality)
-
-**Médio Prazo (2-4 semanas)**:
-4. **Adicionar Exógenas**: USD/BRL, Selic, VIX para melhorar CV scores (~50% → 55%+)
-5. **Estender Horizonte**: Testar 5-day e 20-day vs 1-day predictions
-
-**Monitoramento Contínuo**:
-6. **Recalibração**: Retreinar K=10 ensemble mensalmente
-7. **Drift Detection**: Acompanhar mudanças de regime de mercado
-8. **Maintenance**: Garantir data leakage continues zero
-
 ---
 
 ## 🔗 Referências Técnicas
